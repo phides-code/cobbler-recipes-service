@@ -2,18 +2,18 @@ AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 
 Resources:
-  AppnameBananasService:
+  CobblerRecipesService:
     Type: AWS::Serverless::Api
     Description: "Serverless API for CRUD operations"
     Properties:
-      Name: "appname-bananas-service"
+      Name: "cobbler-recipes-service"
       StageName: Prod
       Cors:
         AllowMethods: "'OPTIONS, POST, GET, PUT, DELETE'"
         AllowHeaders: "'Content-Type'"
         AllowOrigin: "'http://localhost:3000'" # replace with frontend app URL
 
-  AppnameBananasFunction:
+  CobblerRecipesFunction:
     Type: AWS::Serverless::Function
     Properties:
       Timeout: 10
@@ -23,51 +23,51 @@ Resources:
         - AWSLambdaExecute
         - SecretsManagerReadWrite
         - DynamoDBCrudPolicy:
-            TableName: !Ref AppnameBananasTable
+            TableName: !Ref CobblerRecipesTable
       Events:
-        BananasOptions:
+        RecipesOptions:
           Type: Api
           Properties:
-            Path: /bananas
+            Path: /recipes
             Method: OPTIONS
-            RestApiId: !Ref AppnameBananasService
-        GetBanana:
+            RestApiId: !Ref CobblerRecipesService
+        GetRecipe:
           Type: Api
           Properties:
-            Path: /bananas/{id}
+            Path: /recipes/{id}
             Method: GET
-            RestApiId: !Ref AppnameBananasService
-        GetBananas:
+            RestApiId: !Ref CobblerRecipesService
+        GetRecipes:
           Type: Api
           Properties:
-            Path: /bananas
+            Path: /recipes
             Method: GET
-            RestApiId: !Ref AppnameBananasService
-        PutBanana:
+            RestApiId: !Ref CobblerRecipesService
+        PutRecipe:
           Type: Api
           Properties:
-            Path: /bananas
+            Path: /recipes
             Method: POST
-            RestApiId: !Ref AppnameBananasService
-        DeleteBanana:
+            RestApiId: !Ref CobblerRecipesService
+        DeleteRecipe:
           Type: Api
           Properties:
-            Path: /bananas/{id}
+            Path: /recipes/{id}
             Method: DELETE
-            RestApiId: !Ref AppnameBananasService
-        UpdateBanana:
+            RestApiId: !Ref CobblerRecipesService
+        UpdateRecipe:
           Type: Api
           Properties:
-            Path: /bananas/{id}
+            Path: /recipes/{id}
             Method: PUT
-            RestApiId: !Ref AppnameBananasService
+            RestApiId: !Ref CobblerRecipesService
     Metadata:
       BuildMethod: makefile
 
-  AppnameBananasTable:
+  CobblerRecipesTable:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: AppnameBananas
+      TableName: CobblerRecipes
       AttributeDefinitions:
         - AttributeName: id
           AttributeType: S

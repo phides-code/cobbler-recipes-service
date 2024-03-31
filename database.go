@@ -15,22 +15,6 @@ import (
 	"github.com/google/uuid"
 )
 
-type Entity struct {
-	// example database table structure:
-	Id          string `json:"id" dynamodbav:"id"`
-	Description string `json:"description" dynamodbav:"description"`
-	Location    string `json:"location" dynamodbav:"location"`
-	Quantity    int    `json:"quantity" dynamodbav:"quantity"`
-	// adjust fields as needed
-}
-
-type NewOrUpdatedEntity struct {
-	Description string `json:"description" validate:"required"`
-	Location    string `json:"location" validate:"required"`
-	Quantity    int    `json:"quantity" validate:"required"`
-	// adjust fields as needed
-}
-
 func getClient() (dynamodb.Client, error) {
 	sdkConfig, err := config.LoadDefaultConfig(context.TODO())
 
@@ -108,10 +92,14 @@ func listEntities(ctx context.Context) ([]Entity, error) {
 func insertEntity(ctx context.Context, newEntity NewOrUpdatedEntity) (*Entity, error) {
 	entity := Entity{
 		Id:          uuid.NewString(),
+		AuthorId:    newEntity.AuthorId,
+		Title:       newEntity.Title,
 		Description: newEntity.Description,
-		Location:    newEntity.Location,
-		Quantity:    newEntity.Quantity,
-		// adjust fields as needed
+		FoodType:    newEntity.FoodType,
+		Cuisine:     newEntity.Cuisine,
+		Ingredients: newEntity.Ingredients,
+		Steps:       newEntity.Steps,
+		LikedBy:     newEntity.LikedBy,
 	}
 
 	entityMap, err := attributevalue.MarshalMap(entity)
@@ -177,14 +165,29 @@ func updateEntity(ctx context.Context, id string, updatedEntity NewOrUpdatedEnti
 
 	expr, err := expression.NewBuilder().WithUpdate(
 		expression.Set(
+			expression.Name("authorId"),
+			expression.Value(updatedEntity.AuthorId),
+		).Set(
+			expression.Name("title"),
+			expression.Value(updatedEntity.Title),
+		).Set(
 			expression.Name("description"),
 			expression.Value(updatedEntity.Description),
 		).Set(
-			expression.Name("location"),
-			expression.Value(updatedEntity.Location),
+			expression.Name("foodType"),
+			expression.Value(updatedEntity.FoodType),
 		).Set(
-			expression.Name("quantity"),
-			expression.Value(updatedEntity.Quantity),
+			expression.Name("cuisine"),
+			expression.Value(updatedEntity.Cuisine),
+		).Set(
+			expression.Name("ingredients"),
+			expression.Value(updatedEntity.Ingredients),
+		).Set(
+			expression.Name("steps"),
+			expression.Value(updatedEntity.Steps),
+		).Set(
+			expression.Name("likedBy"),
+			expression.Value(updatedEntity.LikedBy),
 		),
 		// adjust fields as needed
 	).WithCondition(

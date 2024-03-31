@@ -4,7 +4,7 @@ package main
 const OriginURL = "http://localhost:3000"
 
 // replace with table name
-const TableName = "AppnameBananas"
+const TableName = "CobblerRecipes"
 
 // replace with API path
-const ApiPath = "bananas"
+const ApiPath = "recipes"

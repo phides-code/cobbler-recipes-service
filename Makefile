@@ -2,7 +2,7 @@
 build:
 	sam build
 
-build-AppnameBananasFunction:
+build-CobblerRecipesFunction:
 	GOOS=linux CGO_ENABLED=0 go build -tags lambda.norpc -o $(ARTIFACTS_DIR)/bootstrap .
 
 .PHONY: init
