@@ -1,2 +1,4 @@
 .env
 .aws-sam/
+dynamodb-recipes.json
+format-recipes.sh
