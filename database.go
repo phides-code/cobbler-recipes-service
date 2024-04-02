@@ -188,8 +188,10 @@ func updateEntity(ctx context.Context, id string, updatedEntity NewOrUpdatedEnti
 		).Set(
 			expression.Name("likedBy"),
 			expression.Value(updatedEntity.LikedBy),
+		).Set(
+			expression.Name("updated_at"),
+			expression.Value(updatedEntity.Updated_at),
 		),
-		// adjust fields as needed
 	).WithCondition(
 		expression.Equal(
 			expression.Name("id"),

@@ -21,6 +21,7 @@ type Entity struct {
 	Ingredients []Ingredient `json:"ingredients" dynamodbav:"ingredients"`
 	Steps       []Step       `json:"steps" dynamodbav:"steps"`
 	LikedBy     []string     `json:"likedBy" dynamodbav:"likedBy"`
+	Updated_at  string       `json:"updated_at" dynamodbav:"updated_at"`
 }
 
 type NewOrUpdatedEntity struct {
@@ -32,4 +33,5 @@ type NewOrUpdatedEntity struct {
 	Ingredients []Ingredient `json:"ingredients" validate:"required"`
 	Steps       []Step       `json:"steps" validate:"required"`
 	LikedBy     []string     `json:"likedBy" validate:"required"`
+	Updated_at  string       `json:"updated_at" validate:"required"`
 }
