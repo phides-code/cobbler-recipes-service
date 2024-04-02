@@ -2,3 +2,6 @@
 .aws-sam/
 dynamodb-recipes.json
 format-recipes.sh
+mongodb-recipes_modified.json
+mongodb-recipes.json
+update-recipes.sh

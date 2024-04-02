@@ -24,8 +24,6 @@ var headers = map[string]string{
 }
 
 func router(ctx context.Context, req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-	log.Printf("Received req %#v", req)
-
 	switch req.HTTPMethod {
 	case "GET":
 		return processGet(ctx, req)
@@ -85,7 +83,7 @@ func processGetEntityById(ctx context.Context, id string) (events.APIGatewayProx
 	if err != nil {
 		return serverError(err)
 	}
-	log.Printf("Successfully fetched entity %s", response.Data)
+	log.Printf("Successfully fetched entity")
 
 	return events.APIGatewayProxyResponse{
 		StatusCode: http.StatusOK,
@@ -111,7 +109,7 @@ func processGetAll(ctx context.Context) (events.APIGatewayProxyResponse, error) 
 	if err != nil {
 		return serverError(err)
 	}
-	log.Printf("Successfully fetched entities: %s", response.Data)
+	log.Printf("Successfully fetched entities")
 
 	return events.APIGatewayProxyResponse{
 		StatusCode: http.StatusOK,
@@ -150,7 +148,7 @@ func processPost(ctx context.Context, req events.APIGatewayProxyRequest) (events
 	if err != nil {
 		return serverError(err)
 	}
-	log.Printf("Successfully fetched entity %s", response.Data)
+	log.Printf("Successfully fetched entity")
 
 	additionalHeaders := map[string]string{
 		"Location": fmt.Sprintf("/%s/%s", ApiPath, entity.Id),
