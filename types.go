@@ -1,8 +1,8 @@
 package main
 
 type ImageSource struct {
-	OriginalName string `json:"originalName" dynamodbav:"originalName"`
-	UUIDName     string `json:"uuidName" dynamodbav:"uuidName"`
+	OriginalName string `json:"originalName" dynamodbav:"originalName" validate:"required"`
+	UUIDName     string `json:"uuidName" dynamodbav:"uuidName" validate:"required"`
 }
 
 type Entity struct {
@@ -26,7 +26,6 @@ type NewEntity struct {
 	Tags        []string    `json:"tags" validate:"required"`
 	Ingredients []string    `json:"ingredients" validate:"required"`
 	Steps       []string    `json:"steps" validate:"required"`
-	Likes       int         `json:"likes" validate:"required"`
 	PrepTime    string      `json:"prepTime" validate:"required"`
 	ImageSource ImageSource `json:"imageSource" validate:"required"`
 }

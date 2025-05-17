@@ -104,7 +104,7 @@ func insertEntity(ctx context.Context, newEntity NewEntity) (*Entity, error) {
 		Tags:        newEntity.Tags,
 		Ingredients: newEntity.Ingredients,
 		Steps:       newEntity.Steps,
-		Likes:       newEntity.Likes,
+		Likes:       0,
 		PrepTime:    newEntity.PrepTime,
 		ImageSource: newEntity.ImageSource,
 	}
