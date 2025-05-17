@@ -21,20 +21,20 @@ Resources:
       Auth:
         ApiKeyRequired: true
 
-  CobblerApiKey:
+  CobblerRecipesApiKey:
     Type: AWS::ApiGateway::ApiKey
     Properties:
-      Name: "CobblerApiKey"
+      Name: "CobblerRecipesApiKey"
       Enabled: true
       Value: !Ref ApiKeyValue
       StageKeys:
         - RestApiId: !Ref CobblerRecipesService
           StageName: Prod
 
-  CobblerUsagePlan:
+  CobblerRecipesUsagePlan:
     Type: AWS::ApiGateway::UsagePlan
     Properties:
-      UsagePlanName: "CobblerUsagePlan"
+      UsagePlanName: "CobblerRecipesUsagePlan"
       ApiStages:
         - ApiId: !Ref CobblerRecipesService
           Stage: Prod
@@ -45,12 +45,12 @@ Resources:
         Limit: 10000
         Period: MONTH
 
-  CobblerUsagePlanKey:
+  CobblerRecipesUsagePlanKey:
     Type: AWS::ApiGateway::UsagePlanKey
     Properties:
-      KeyId: !Ref CobblerApiKey
+      KeyId: !Ref CobblerRecipesApiKey
       KeyType: API_KEY
-      UsagePlanId: !Ref CobblerUsagePlan
+      UsagePlanId: !Ref CobblerRecipesUsagePlan
 
   CobblerRecipesFunction:
     Type: AWS::Serverless::Function
