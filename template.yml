@@ -1,6 +1,12 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 
+Parameters:
+  ApiKeyValue:
+    Type: String
+    NoEcho: true
+    Description: "API Key for the CobblerRecipesService"
+
 Resources:
   CobblerRecipesService:
     Type: AWS::Serverless::Api
@@ -10,8 +16,41 @@ Resources:
       StageName: Prod
       Cors:
         AllowMethods: "'OPTIONS, POST, GET, PUT, DELETE'"
-        AllowHeaders: "'Content-Type'"
-        AllowOrigin: "'http://localhost:3000'" # replace with frontend app URL
+        AllowHeaders: "'Content-Type, x-api-key'"
+        AllowOrigin: "'http://localhost:3000'" # replace for production
+      Auth:
+        ApiKeyRequired: true
+
+  CobblerApiKey:
+    Type: AWS::ApiGateway::ApiKey
+    Properties:
+      Name: "CobblerApiKey"
+      Enabled: true
+      Value: !Ref ApiKeyValue
+      StageKeys:
+        - RestApiId: !Ref CobblerRecipesService
+          StageName: Prod
+
+  CobblerUsagePlan:
+    Type: AWS::ApiGateway::UsagePlan
+    Properties:
+      UsagePlanName: "CobblerUsagePlan"
+      ApiStages:
+        - ApiId: !Ref CobblerRecipesService
+          Stage: Prod
+      Throttle:
+        RateLimit: 100
+        BurstLimit: 20
+      Quota:
+        Limit: 10000
+        Period: MONTH
+
+  CobblerUsagePlanKey:
+    Type: AWS::ApiGateway::UsagePlanKey
+    Properties:
+      KeyId: !Ref CobblerApiKey
+      KeyType: API_KEY
+      UsagePlanId: !Ref CobblerUsagePlan
 
   CobblerRecipesFunction:
     Type: AWS::Serverless::Function
@@ -19,9 +58,9 @@ Resources:
       Timeout: 10
       Handler: bootstrap
       Runtime: provided.al2023
+      MemorySize: 512
       Policies:
         - AWSLambdaExecute
-        - SecretsManagerReadWrite
         - DynamoDBCrudPolicy:
             TableName: !Ref CobblerRecipesTable
       Events:
@@ -31,36 +70,56 @@ Resources:
             Path: /recipes
             Method: OPTIONS
             RestApiId: !Ref CobblerRecipesService
+            Auth:
+              ApiKeyRequired: false
+        RecipesOptionsId:
+          Type: Api
+          Properties:
+            Path: /recipes/{id}
+            Method: OPTIONS
+            RestApiId: !Ref CobblerRecipesService
+            Auth:
+              ApiKeyRequired: false
         GetRecipe:
           Type: Api
           Properties:
             Path: /recipes/{id}
             Method: GET
             RestApiId: !Ref CobblerRecipesService
+            Auth:
+              ApiKeyRequired: true
         GetRecipes:
           Type: Api
           Properties:
             Path: /recipes
             Method: GET
             RestApiId: !Ref CobblerRecipesService
+            Auth:
+              ApiKeyRequired: true
         PutRecipe:
           Type: Api
           Properties:
             Path: /recipes
             Method: POST
             RestApiId: !Ref CobblerRecipesService
+            Auth:
+              ApiKeyRequired: true
         DeleteRecipe:
           Type: Api
           Properties:
             Path: /recipes/{id}
             Method: DELETE
             RestApiId: !Ref CobblerRecipesService
+            Auth:
+              ApiKeyRequired: true
         UpdateRecipe:
           Type: Api
           Properties:
             Path: /recipes/{id}
             Method: PUT
             RestApiId: !Ref CobblerRecipesService
+            Auth:
+              ApiKeyRequired: true
     Metadata:
       BuildMethod: makefile
 

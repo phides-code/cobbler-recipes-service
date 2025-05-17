@@ -1,37 +1,43 @@
 package main
 
-type Ingredient struct {
-	Id      string
-	Content string
-}
-
-type Step struct {
-	Id         string
-	Content    string
-	StepNumber int
+type ImageSource struct {
+	OriginalName string `json:"originalName" dynamodbav:"originalName"`
+	UUIDName     string `json:"uuidName" dynamodbav:"uuidName"`
 }
 
 type Entity struct {
-	Id          string       `json:"id" dynamodbav:"id"`
-	AuthorId    string       `json:"authorId" dynamodbav:"authorId"`
-	Title       string       `json:"title" dynamodbav:"title"`
-	Description string       `json:"description" dynamodbav:"description"`
-	FoodType    []string     `json:"foodType" dynamodbav:"foodType"`
-	Cuisine     string       `json:"cuisine" dynamodbav:"cuisine"`
-	Ingredients []Ingredient `json:"ingredients" dynamodbav:"ingredients"`
-	Steps       []Step       `json:"steps" dynamodbav:"steps"`
-	LikedBy     []string     `json:"likedBy" dynamodbav:"likedBy"`
-	Updated_at  string       `json:"updated_at" dynamodbav:"updated_at"`
+	Id          string      `json:"id,omitempty" dynamodbav:"id"`
+	Author      string      `json:"author" dynamodbav:"author"`
+	Title       string      `json:"title" dynamodbav:"title"`
+	Description string      `json:"description" dynamodbav:"description"`
+	Tags        []string    `json:"tags" dynamodbav:"tags"`
+	Ingredients []string    `json:"ingredients" dynamodbav:"ingredients"`
+	Steps       []string    `json:"steps" dynamodbav:"steps"`
+	Likes       int         `json:"likes" dynamodbav:"likes"`
+	PrepTime    string      `json:"prepTime" dynamodbav:"prepTime"`
+	ImageSource ImageSource `json:"imageSource" dynamodbav:"imageSource"`
+	CreatedOn   uint64      `json:"createdOn" dynamodbav:"createdOn"`
 }
 
-type NewOrUpdatedEntity struct {
-	AuthorId    string       `json:"authorId" validate:"required"`
-	Title       string       `json:"title" validate:"required"`
-	Description string       `json:"description" validate:"required"`
-	FoodType    []string     `json:"foodType" validate:"required"`
-	Cuisine     string       `json:"cuisine" validate:"required"`
-	Ingredients []Ingredient `json:"ingredients" validate:"required"`
-	Steps       []Step       `json:"steps" validate:"required"`
-	LikedBy     []string     `json:"likedBy" validate:"required"`
-	Updated_at  string       `json:"updated_at" validate:"required"`
+type NewEntity struct {
+	Author      string      `json:"author" validate:"required"`
+	Title       string      `json:"title" validate:"required"`
+	Description string      `json:"description" validate:"required"`
+	Tags        []string    `json:"tags" validate:"required"`
+	Ingredients []string    `json:"ingredients" validate:"required"`
+	Steps       []string    `json:"steps" validate:"required"`
+	Likes       int         `json:"likes" validate:"required"`
+	PrepTime    string      `json:"prepTime" validate:"required"`
+	ImageSource ImageSource `json:"imageSource" validate:"required"`
+}
+
+type UpdatedEntity struct {
+	Title       string      `json:"title" validate:"required"`
+	Description string      `json:"description" validate:"required"`
+	Tags        []string    `json:"tags" validate:"required"`
+	Ingredients []string    `json:"ingredients" validate:"required"`
+	Steps       []string    `json:"steps" validate:"required"`
+	Likes       int         `json:"likes" validate:"required"`
+	PrepTime    string      `json:"prepTime" validate:"required"`
+	ImageSource ImageSource `json:"imageSource" validate:"required"`
 }
