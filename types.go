@@ -6,21 +6,23 @@ type ImageSource struct {
 }
 
 type Entity struct {
-	Id          string      `json:"id,omitempty" dynamodbav:"id"`
-	Author      string      `json:"author" dynamodbav:"author"`
+	Id        string `json:"id,omitempty" dynamodbav:"id"`
+	Author    string `json:"author" dynamodbav:"author"`
+	Likes     int    `json:"likes" dynamodbav:"likes"`
+	CreatedOn uint64 `json:"createdOn" dynamodbav:"createdOn"`
+	//
 	Title       string      `json:"title" dynamodbav:"title"`
 	Description string      `json:"description" dynamodbav:"description"`
 	Tags        []string    `json:"tags" dynamodbav:"tags"`
 	Ingredients []string    `json:"ingredients" dynamodbav:"ingredients"`
 	Steps       []string    `json:"steps" dynamodbav:"steps"`
-	Likes       int         `json:"likes" dynamodbav:"likes"`
 	PrepTime    string      `json:"prepTime" dynamodbav:"prepTime"`
 	ImageSource ImageSource `json:"imageSource" dynamodbav:"imageSource"`
-	CreatedOn   uint64      `json:"createdOn" dynamodbav:"createdOn"`
 }
 
 type NewEntity struct {
-	Author      string      `json:"author" validate:"required"`
+	Author string `json:"author" validate:"required"`
+	//
 	Title       string      `json:"title" validate:"required"`
 	Description string      `json:"description" validate:"required"`
 	Tags        []string    `json:"tags" validate:"required"`
@@ -31,12 +33,13 @@ type NewEntity struct {
 }
 
 type UpdatedEntity struct {
+	Likes int `json:"likes" validate:"required"`
+	//
 	Title       string      `json:"title" validate:"required"`
 	Description string      `json:"description" validate:"required"`
 	Tags        []string    `json:"tags" validate:"required"`
 	Ingredients []string    `json:"ingredients" validate:"required"`
 	Steps       []string    `json:"steps" validate:"required"`
-	Likes       int         `json:"likes" validate:"required"`
 	PrepTime    string      `json:"prepTime" validate:"required"`
 	ImageSource ImageSource `json:"imageSource" validate:"required"`
 }
