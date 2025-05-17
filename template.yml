@@ -23,6 +23,7 @@ Resources:
 
   CobblerRecipesApiKey:
     Type: AWS::ApiGateway::ApiKey
+    DependsOn: CobblerRecipesServiceProdStage
     Properties:
       Name: "CobblerRecipesApiKey"
       Enabled: true
@@ -33,6 +34,7 @@ Resources:
 
   CobblerRecipesUsagePlan:
     Type: AWS::ApiGateway::UsagePlan
+    DependsOn: CobblerRecipesServiceProdStage
     Properties:
       UsagePlanName: "CobblerRecipesUsagePlan"
       ApiStages:
