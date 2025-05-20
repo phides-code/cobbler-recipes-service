@@ -143,23 +143,8 @@ func updateEntity(ctx context.Context, id string, updatedEntity UpdatedEntity) (
 	}
 
 	expr, err := expression.NewBuilder().WithUpdate(
-		expression.Set(
-			expression.Name("title"),
-			expression.Value(updatedEntity.Title),
-		).Set(expression.Name("description"),
-			expression.Value(updatedEntity.Description),
-		).Set(expression.Name("tags"),
-			expression.Value(updatedEntity.Tags),
-		).Set(expression.Name("ingredients"),
-			expression.Value(updatedEntity.Ingredients),
-		).Set(expression.Name("steps"),
-			expression.Value(updatedEntity.Steps),
-		).Set(expression.Name("likes"),
+		expression.Set(expression.Name("likes"),
 			expression.Value(updatedEntity.Likes),
-		).Set(expression.Name("prepTime"),
-			expression.Value(updatedEntity.PrepTime),
-		).Set(expression.Name("imageSource"),
-			expression.Value(updatedEntity.ImageSource),
 		),
 	).WithCondition(
 		expression.Equal(
