@@ -33,13 +33,12 @@ type NewEntity struct {
 }
 
 type UpdatedEntity struct {
-	Likes int `json:"likes" validate:"required"`
-	//
-	Title       string      `json:"title" validate:"required"`
-	Description string      `json:"description" validate:"required"`
-	Tags        []string    `json:"tags" validate:"required"`
-	Ingredients []string    `json:"ingredients" validate:"required"`
-	Steps       []string    `json:"steps" validate:"required"`
-	PrepTime    string      `json:"prepTime" validate:"required"`
-	ImageSource ImageSource `json:"imageSource" validate:"required"`
+	Likes       *int        `json:"likes" validate:"required,gte=0"` // Ensure that 0 likes is allowed
+	Title       string      `json:"title"`
+	Description string      `json:"description"`
+	Tags        []string    `json:"tags"`
+	Ingredients []string    `json:"ingredients"`
+	Steps       []string    `json:"steps"`
+	PrepTime    string      `json:"prepTime"`
+	ImageSource ImageSource `json:"imageSource"`
 }
