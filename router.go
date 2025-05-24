@@ -61,6 +61,10 @@ func processGet(ctx context.Context, req events.APIGatewayProxyRequest) (events.
 	if idPresent {
 		return processGetEntityById(ctx, id)
 	} else {
+		queryString, queryStringPresent := req.QueryStringParameters["q"]
+		if queryStringPresent {
+			return processGetEntitiesByQuery(ctx, queryString)
+		}
 		return processGetAll(ctx)
 	}
 }
@@ -78,13 +82,37 @@ func processGetEntityById(ctx context.Context, id string) (events.APIGatewayProx
 	}
 
 	response := ResponseStructure{
-		Data:         entity,
+		Data:         toResponseEntity(entity),
 		ErrorMessage: nil,
 	}
 
 	responseJson, err := json.Marshal(response)
 	if err != nil {
 		log.Println("processGetEntityById() error running json.Marshal")
+		return serverError(err)
+	}
+
+	return events.APIGatewayProxyResponse{
+		StatusCode: http.StatusOK,
+		Body:       string(responseJson),
+		Headers:    headers,
+	}, nil
+}
+
+func processGetEntitiesByQuery(ctx context.Context, queryString string) (events.APIGatewayProxyResponse, error) {
+	entities, err := scanForEntities(ctx, queryString)
+	if err != nil {
+		return serverError(err)
+	}
+
+	response := ResponseStructure{
+		Data:         toResponseEntitySlice(entities),
+		ErrorMessage: nil,
+	}
+
+	responseJson, err := json.Marshal(response)
+	if err != nil {
+		log.Println("processGetEntitiesByQuery() error running json.Marshal")
 		return serverError(err)
 	}
 
@@ -104,7 +132,7 @@ func processGetAll(ctx context.Context) (events.APIGatewayProxyResponse, error) 
 	}
 
 	response := ResponseStructure{
-		Data:         entities,
+		Data:         toResponseEntitySlice(entities),
 		ErrorMessage: nil,
 	}
 
@@ -143,7 +171,7 @@ func processPost(ctx context.Context, req events.APIGatewayProxyRequest) (events
 	}
 
 	response := ResponseStructure{
-		Data:         entity,
+		Data:         toResponseEntity(entity),
 		ErrorMessage: nil,
 	}
 
@@ -197,7 +225,7 @@ func processPut(ctx context.Context, req events.APIGatewayProxyRequest) (events.
 	}
 
 	response := ResponseStructure{
-		Data:         entity,
+		Data:         toResponseEntity(entity),
 		ErrorMessage: nil,
 	}
 
@@ -237,7 +265,7 @@ func processDelete(ctx context.Context, req events.APIGatewayProxyRequest) (even
 	}
 
 	response := ResponseStructure{
-		Data:         entity,
+		Data:         toResponseEntity(entity),
 		ErrorMessage: nil,
 	}
 

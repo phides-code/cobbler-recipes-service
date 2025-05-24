@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"log"
+	"strings"
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -58,6 +59,45 @@ func getEntity(ctx context.Context, id string) (*Entity, error) {
 	return entity, nil
 }
 
+func scanForEntities(ctx context.Context, queryString string) ([]Entity, error) {
+	lowercaseQuery := strings.ToLower(queryString)
+
+	var token map[string]types.AttributeValue
+	entities := make([]Entity, 0)
+
+	for {
+		input := &dynamodb.ScanInput{
+			TableName:        aws.String(TableName),
+			FilterExpression: aws.String("contains(lowercaseTitle, :query)"),
+			ExpressionAttributeValues: map[string]types.AttributeValue{
+				":query": &types.AttributeValueMemberS{Value: lowercaseQuery},
+			},
+			ExclusiveStartKey: token,
+		}
+
+		result, err := db.Scan(ctx, input)
+		if err != nil {
+			log.Println("scanForEntities() error running db.Scan")
+			return nil, err
+		}
+
+		var fetchedEntities []Entity
+		err = attributevalue.UnmarshalListOfMaps(result.Items, &fetchedEntities)
+		if err != nil {
+			log.Println("scanForEntities() error running attributevalue.UnmarshalListOfMaps")
+			return nil, err
+		}
+
+		entities = append(entities, fetchedEntities...)
+		token = result.LastEvaluatedKey
+		if token == nil {
+			break
+		}
+	}
+
+	return entities, nil
+}
+
 func listEntities(ctx context.Context) ([]Entity, error) {
 	entities := make([]Entity, 0)
 
@@ -96,17 +136,18 @@ func insertEntity(ctx context.Context, newEntity NewEntity) (*Entity, error) {
 	createdOnValue := uint64(time.Now().UnixMilli()) // Create a uint64 with current epoch
 
 	entity := Entity{
-		Id:          uuid.NewString(),
-		CreatedOn:   createdOnValue,
-		Author:      newEntity.Author,
-		Title:       newEntity.Title,
-		Description: newEntity.Description,
-		Tags:        newEntity.Tags,
-		Ingredients: newEntity.Ingredients,
-		Steps:       newEntity.Steps,
-		Likes:       0,
-		PrepTime:    newEntity.PrepTime,
-		ImageSource: newEntity.ImageSource,
+		Id:             uuid.NewString(),
+		CreatedOn:      createdOnValue,
+		Author:         newEntity.Author,
+		Title:          newEntity.Title,
+		LowercaseTitle: strings.ToLower(newEntity.Title),
+		Description:    newEntity.Description,
+		Tags:           newEntity.Tags,
+		Ingredients:    newEntity.Ingredients,
+		Steps:          newEntity.Steps,
+		Likes:          0,
+		PrepTime:       newEntity.PrepTime,
+		ImageSource:    newEntity.ImageSource,
 	}
 
 	entityMap, err := attributevalue.MarshalMap(entity)
