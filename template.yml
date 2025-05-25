@@ -17,8 +17,8 @@ Resources:
       Cors:
         AllowMethods: "'OPTIONS, POST, GET, PUT, DELETE'"
         AllowHeaders: "'Content-Type, x-api-key'"
-        AllowOrigin: "'http://localhost:5173'" # replace for production
-        # AllowOrigin: "'https://cobbler.phil-code.com'"
+        # AllowOrigin: "'http://localhost:5173'" # replace for production
+        AllowOrigin: "'https://cobbler.phil-code.com'"
       Auth:
         ApiKeyRequired: true
 
