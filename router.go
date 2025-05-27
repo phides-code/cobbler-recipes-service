@@ -19,11 +19,24 @@ type ResponseStructure struct {
 var validate *validator.Validate = validator.New()
 
 var headers = map[string]string{
-	"Access-Control-Allow-Origin":  OriginURL,
-	"Access-Control-Allow-Headers": "Content-Type, x-amz-content-sha256, x-amz-date, X-Amz-Security-Token, Authorization",
+	"Access-Control-Allow-Origin":      OriginURL,
+	"Access-Control-Allow-Headers":     "Content-Type, x-amz-content-sha256, x-amz-date, X-Amz-Security-Token, Authorization",
+	"Access-Control-Allow-Credentials": "true",
 }
 
 func router(ctx context.Context, req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+	defer func() (events.APIGatewayProxyResponse, error) {
+		if r := recover(); r != nil {
+			log.Printf("Panic recovered: %v", r)
+			return events.APIGatewayProxyResponse{
+				StatusCode: 500,
+				Headers:    headers,
+				Body:       "Internal Server Error (defer function)",
+			}, nil
+		}
+		return events.APIGatewayProxyResponse{}, nil
+	}()
+
 	log.Println("router() received " + req.HTTPMethod + " request")
 
 	switch req.HTTPMethod {
