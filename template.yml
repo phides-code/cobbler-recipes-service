@@ -14,6 +14,31 @@ Resources:
         # AllowOrigin: "'http://localhost:5173'" # replace for production
         AllowOrigin: "'https://cobbler.phil-code.com'"
         AllowCredentials: true
+      MethodSettings:
+        - LoggingLevel: INFO
+          ResourcePath: "/*"
+          HttpMethod: "*"
+          MetricsEnabled: true
+      AccessLogSetting:
+        DestinationArn: !Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/api-gateway/${CobblerRecipesService}:*
+        Format: >-
+          {
+            "requestId":"$context.requestId",
+            "ip":"$context.identity.sourceIp",
+            "requestTime":"$context.requestTime",
+            "httpMethod":"$context.httpMethod",
+            "resourcePath":"$context.resourcePath",
+            "status":"$context.status",
+            "responseLength":"$context.responseLength",
+            "integrationStatus":"$context.integration.integrationStatus",
+            "errorMessage":"$context.error.message",
+            "authorizerError":"$context.authorizer.error"
+          }
+  CobblerApiLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/aws/api-gateway/${CobblerRecipesService}"
+      RetentionInDays: 7
 
   CobblerRecipesFunction:
     Type: AWS::Serverless::Function
