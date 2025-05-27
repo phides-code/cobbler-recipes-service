@@ -20,7 +20,7 @@ Resources:
           HttpMethod: "*"
           MetricsEnabled: true
       AccessLogSetting:
-        DestinationArn: !Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/api-gateway/${CobblerRecipesService}:*
+        DestinationArn: !GetAtt CobblerApiLogGroup.Arn
         Format: '$context.identity.sourceIp $context.identity.caller $context.identity.user [$context.requestTime] "$context.httpMethod $context.resourcePath $context.protocol" $context.status $context.responseLength $context.requestId'
   CobblerApiLogGroup:
     Type: AWS::Logs::LogGroup
@@ -29,31 +29,32 @@ Resources:
       RetentionInDays: 7
 
   ApiGatewayCloudWatchRole:
-    Type: AWS::IAM::Role
+    Type: 'AWS::IAM::Role'
     Properties:
       AssumeRolePolicyDocument:
-        Version: "2012-10-17"
+        Version: '2012-10-17'
         Statement:
           - Effect: Allow
             Principal:
-              Service: apigateway.amazonaws.com
-            Action: sts:AssumeRole
+              Service:
+                - apigateway.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
       Policies:
-        - PolicyName: AllowLogs
+        - PolicyName: ApiGatewayLogsPolicy
           PolicyDocument:
-            Version: "2012-10-17"
+            Version: '2012-10-17'
             Statement:
               - Effect: Allow
                 Action:
-                  - logs:CreateLogGroup
-                  - logs:CreateLogStream
-                  - logs:PutLogEvents
-                Resource: "*"
-
-  AttachGatewayLogs:
-    Type: AWS::ApiGateway::Account
-    Properties:
-      CloudWatchRoleArn: !Sub arn:aws:iam::${AWS::AccountId}:role/${ApiGatewayCloudWatchRole}
+                  - 'logs:CreateLogGroup'
+                  - 'logs:CreateLogStream'
+                  - 'logs:DescribeLogGroups'
+                  - 'logs:DescribeLogStreams'
+                  - 'logs:PutLogEvents'
+                  - 'logs:GetLogEvents'
+                  - 'logs:FilterLogEvents'
+                Resource: !GetAtt CobblerApiLogGroup.Arn
 
   CobblerRecipesFunction:
     Type: AWS::Serverless::Function
