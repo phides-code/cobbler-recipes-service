@@ -36,8 +36,6 @@ jobs:
             - name: Deploy with SAM
               run: |
                   sam deploy \
-                  --parameter-overrides \
-                    ApiKeyValue="${{ secrets.API_KEY }}" \
                   --stack-name ${{ env.SAM_STACK_NAME }} \
                   --region ${{ env.SAM_REGION }} \
                   --capabilities ${{ env.SAM_CAPABILITIES }} \

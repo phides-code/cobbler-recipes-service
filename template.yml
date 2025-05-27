@@ -1,12 +1,6 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 
-Parameters:
-  ApiKeyValue:
-    Type: String
-    NoEcho: true
-    Description: "API Key for the CobblerRecipesService"
-
 Resources:
   CobblerRecipesService:
     Type: AWS::Serverless::Api
@@ -16,44 +10,9 @@ Resources:
       StageName: Prod
       Cors:
         AllowMethods: "'OPTIONS, POST, GET, PUT, DELETE'"
-        AllowHeaders: "'Content-Type, x-api-key'"
+        AllowHeaders: "'Content-Type'"
         # AllowOrigin: "'http://localhost:5173'" # replace for production
         AllowOrigin: "'https://cobbler.phil-code.com'"
-      Auth:
-        ApiKeyRequired: true
-
-  CobblerRecipesApiKey:
-    Type: AWS::ApiGateway::ApiKey
-    DependsOn: CobblerRecipesServiceProdStage
-    Properties:
-      Name: "CobblerRecipesApiKey"
-      Enabled: true
-      Value: !Ref ApiKeyValue
-      StageKeys:
-        - RestApiId: !Ref CobblerRecipesService
-          StageName: Prod
-
-  CobblerRecipesUsagePlan:
-    Type: AWS::ApiGateway::UsagePlan
-    DependsOn: CobblerRecipesServiceProdStage
-    Properties:
-      UsagePlanName: "CobblerRecipesUsagePlan"
-      ApiStages:
-        - ApiId: !Ref CobblerRecipesService
-          Stage: Prod
-      Throttle:
-        RateLimit: 100
-        BurstLimit: 20
-      Quota:
-        Limit: 10000
-        Period: MONTH
-
-  CobblerRecipesUsagePlanKey:
-    Type: AWS::ApiGateway::UsagePlanKey
-    Properties:
-      KeyId: !Ref CobblerRecipesApiKey
-      KeyType: API_KEY
-      UsagePlanId: !Ref CobblerRecipesUsagePlan
 
   CobblerRecipesFunction:
     Type: AWS::Serverless::Function
@@ -73,16 +32,12 @@ Resources:
             Path: /recipes
             Method: OPTIONS
             RestApiId: !Ref CobblerRecipesService
-            Auth:
-              ApiKeyRequired: false
         RecipesOptionsId:
           Type: Api
           Properties:
             Path: /recipes/{id}
             Method: OPTIONS
             RestApiId: !Ref CobblerRecipesService
-            Auth:
-              ApiKeyRequired: false
         GetRecipe:
           Type: Api
           Properties:
@@ -90,7 +45,7 @@ Resources:
             Method: GET
             RestApiId: !Ref CobblerRecipesService
             Auth:
-              ApiKeyRequired: true
+                Authorizer: AWS_IAM
         GetRecipes:
           Type: Api
           Properties:
@@ -98,7 +53,7 @@ Resources:
             Method: GET
             RestApiId: !Ref CobblerRecipesService
             Auth:
-              ApiKeyRequired: true
+                Authorizer: AWS_IAM
         PutRecipe:
           Type: Api
           Properties:
@@ -106,7 +61,7 @@ Resources:
             Method: POST
             RestApiId: !Ref CobblerRecipesService
             Auth:
-              ApiKeyRequired: true
+                Authorizer: AWS_IAM
         DeleteRecipe:
           Type: Api
           Properties:
@@ -114,7 +69,7 @@ Resources:
             Method: DELETE
             RestApiId: !Ref CobblerRecipesService
             Auth:
-              ApiKeyRequired: true
+                Authorizer: AWS_IAM
         UpdateRecipe:
           Type: Api
           Properties:
@@ -122,7 +77,7 @@ Resources:
             Method: PUT
             RestApiId: !Ref CobblerRecipesService
             Auth:
-              ApiKeyRequired: true
+                Authorizer: AWS_IAM
     Metadata:
       BuildMethod: makefile
 
