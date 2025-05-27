@@ -2,6 +2,12 @@ AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 
 Resources:
+  CobblerApiLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/aws/api-gateway/${CobblerRecipesService}"
+      RetentionInDays: 7
+
   CobblerRecipesService:
     Type: AWS::Serverless::Api
     Description: "Serverless API for CRUD operations"
@@ -22,44 +28,6 @@ Resources:
       AccessLogSetting:
         DestinationArn: !GetAtt CobblerApiLogGroup.Arn
         Format: '$context.identity.sourceIp $context.identity.caller $context.identity.user [$context.requestTime] "$context.httpMethod $context.resourcePath $context.protocol" $context.status $context.responseLength $context.requestId'
-  CobblerApiLogGroup:
-    Type: AWS::Logs::LogGroup
-    Properties:
-      LogGroupName: !Sub "/aws/api-gateway/${CobblerRecipesService}"
-      RetentionInDays: 7
-  
-  ApiGatewayAccount:
-    Type: 'AWS::ApiGateway::Account'
-    Properties:
-    CloudWatchRoleArn: !GetAtt ApiGatewayCloudWatchRole.Arn
-
-  ApiGatewayCloudWatchRole:
-    Type: 'AWS::IAM::Role'
-    Properties:
-      AssumeRolePolicyDocument:
-        Version: '2012-10-17'
-        Statement:
-          - Effect: Allow
-            Principal:
-              Service:
-                - apigateway.amazonaws.com
-            Action:
-              - 'sts:AssumeRole'
-      Policies:
-        - PolicyName: ApiGatewayLogsPolicy
-          PolicyDocument:
-            Version: '2012-10-17'
-            Statement:
-              - Effect: Allow
-                Action:
-                  - 'logs:CreateLogGroup'
-                  - 'logs:CreateLogStream'
-                  - 'logs:DescribeLogGroups'
-                  - 'logs:DescribeLogStreams'
-                  - 'logs:PutLogEvents'
-                  - 'logs:GetLogEvents'
-                  - 'logs:FilterLogEvents'
-                Resource: !GetAtt CobblerApiLogGroup.Arn
 
   CobblerRecipesFunction:
     Type: AWS::Serverless::Function
