@@ -54,10 +54,7 @@ Resources:
   AttachGatewayLogs:
     Type: AWS::ApiGateway::Account
     Properties:
-      CloudWatchRoleArn: 
-        Fn::GetAtt: 
-          - ApiGatewayCloudWatchRole
-          - Arn
+      CloudWatchRoleArn: !Sub arn:aws:iam::${AWS::AccountId}:role/${ApiGatewayCloudWatchRole}
 
   CobblerRecipesFunction:
     Type: AWS::Serverless::Function
