@@ -27,6 +27,11 @@ Resources:
     Properties:
       LogGroupName: !Sub "/aws/api-gateway/${CobblerRecipesService}"
       RetentionInDays: 7
+  
+  ApiGatewayAccount:
+    Type: 'AWS::ApiGateway::Account'
+    Properties:
+    CloudWatchRoleArn: !GetAtt ApiGatewayCloudWatchRole.Arn
 
   ApiGatewayCloudWatchRole:
     Type: 'AWS::IAM::Role'
