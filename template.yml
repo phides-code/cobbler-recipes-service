@@ -25,8 +25,12 @@ Resources:
           ResourcePath: "/*"
           HttpMethod: "*"
           MetricsEnabled: true
+          DataTraceEnabled: true
       AccessLogSetting:
-        DestinationArn: !GetAtt CobblerApiLogGroup.Arn
+        DestinationArn: 
+          Fn::GetAtt:
+            - CobblerApiLogGroup
+            - Arn
         Format: '$context.identity.sourceIp $context.identity.caller $context.identity.user [$context.requestTime] "$context.httpMethod $context.resourcePath $context.protocol" $context.status $context.responseLength $context.requestId'
 
   CobblerRecipesFunction:
@@ -60,7 +64,7 @@ Resources:
             Method: GET
             RestApiId: !Ref CobblerRecipesService
             Auth:
-                Authorizer: AWS_IAM
+              Authorizer: AWS_IAM
         GetRecipes:
           Type: Api
           Properties:
@@ -68,7 +72,7 @@ Resources:
             Method: GET
             RestApiId: !Ref CobblerRecipesService
             Auth:
-                Authorizer: AWS_IAM
+              Authorizer: AWS_IAM
         PutRecipe:
           Type: Api
           Properties:
@@ -76,7 +80,7 @@ Resources:
             Method: POST
             RestApiId: !Ref CobblerRecipesService
             Auth:
-                Authorizer: AWS_IAM
+              Authorizer: AWS_IAM
         DeleteRecipe:
           Type: Api
           Properties:
@@ -84,7 +88,7 @@ Resources:
             Method: DELETE
             RestApiId: !Ref CobblerRecipesService
             Auth:
-                Authorizer: AWS_IAM
+              Authorizer: AWS_IAM
         UpdateRecipe:
           Type: Api
           Properties:
@@ -92,7 +96,8 @@ Resources:
             Method: PUT
             RestApiId: !Ref CobblerRecipesService
             Auth:
-                Authorizer: AWS_IAM
+              Authorizer: AWS_IAM
+
     Metadata:
       BuildMethod: makefile
 
