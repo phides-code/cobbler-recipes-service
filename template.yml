@@ -21,19 +21,7 @@ Resources:
           MetricsEnabled: true
       AccessLogSetting:
         DestinationArn: !Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/api-gateway/${CobblerRecipesService}:*
-        Format: >-
-          {
-            "requestId":"$context.requestId",
-            "ip":"$context.identity.sourceIp",
-            "requestTime":"$context.requestTime",
-            "httpMethod":"$context.httpMethod",
-            "resourcePath":"$context.resourcePath",
-            "status":"$context.status",
-            "responseLength":"$context.responseLength",
-            "integrationStatus":"$context.integration.integrationStatus",
-            "errorMessage":"$context.error.message",
-            "authorizerError":"$context.authorizer.error"
-          }
+        Format: '$context.identity.sourceIp $context.identity.caller $context.identity.user [$context.requestTime] "$context.httpMethod $context.resourcePath $context.protocol" $context.status $context.responseLength $context.requestId'
   CobblerApiLogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
