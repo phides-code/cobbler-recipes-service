@@ -28,6 +28,37 @@ Resources:
       LogGroupName: !Sub "/aws/api-gateway/${CobblerRecipesService}"
       RetentionInDays: 7
 
+  ApiGatewayCloudWatchRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: ApiGatewayCloudWatchLogsRole
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: apigateway.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: AllowWritingLogs
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: "*"
+
+  AttachGatewayLogs:
+    Type: AWS::ApiGateway::Account
+    Properties:
+      CloudWatchRoleArn: 
+        Fn::GetAtt: 
+          - ApiGatewayCloudWatchRole
+          - Arn
+
   CobblerRecipesFunction:
     Type: AWS::Serverless::Function
     Properties:
