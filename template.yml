@@ -40,7 +40,7 @@ Resources:
               Service: apigateway.amazonaws.com
             Action: sts:AssumeRole
       Policies:
-        - PolicyName: AllowWritingLogs
+        - PolicyName: AllowAPIGatewayToWriteLogs
           PolicyDocument:
             Version: "2012-10-17"
             Statement:
@@ -54,7 +54,8 @@ Resources:
   AttachGatewayLogs:
     Type: AWS::ApiGateway::Account
     Properties:
-      CloudWatchRoleArn: !Sub arn:aws:iam::${AWS::AccountId}:role/${ApiGatewayCloudWatchRole}
+      CloudWatchRoleArn: arn:aws:iam::${AWS::AccountId}:role/ApiGatewayCloudWatchLogsRole
+
 
   CobblerRecipesFunction:
     Type: AWS::Serverless::Function
