@@ -37,7 +37,10 @@ func router(ctx context.Context, req events.APIGatewayProxyRequest) (events.APIG
 		return events.APIGatewayProxyResponse{}, nil
 	}()
 
-	log.Println("router() received " + req.HTTPMethod + " request")
+	// Log request details for debugging authentication issues
+	log.Printf("Request received: Method=%s, Path=%s", req.HTTPMethod, req.Path)
+	log.Printf("Auth Context: %+v", req.RequestContext.Identity)
+	log.Printf("Headers: %+v", req.Headers)
 
 	switch req.HTTPMethod {
 	case "GET":

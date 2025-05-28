@@ -40,6 +40,8 @@ Resources:
       Handler: bootstrap
       Runtime: provided.al2023
       MemorySize: 512
+      LoggingConfig:
+        LogFormat: JSON
       Policies:
         - AWSLambdaExecute
         - DynamoDBCrudPolicy:
