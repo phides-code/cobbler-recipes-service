@@ -2,24 +2,24 @@ AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 
 Resources:
-  CobblerApiLogGroup:
-    Type: AWS::Logs::LogGroup
-    Properties:
-      LogGroupName: !Sub "/aws/api-gateway/${CobblerRecipesService}"
-      RetentionInDays: 7
-
   CobblerRecipesService:
     Type: AWS::Serverless::Api
     Description: "Serverless API for CRUD operations"
     Properties:
       Name: "cobbler-recipes-service"
       StageName: Prod
+      Auth:
+        DefaultAuthorizer: AWS_IAM
+        InvokeRole: NONE  
+
       Cors:
         AllowMethods: "'OPTIONS, POST, GET, PUT, DELETE'"
         AllowHeaders: "'Content-Type, x-amz-content-sha256, x-amz-date, X-Amz-Security-Token, Authorization'"
         # AllowOrigin: "'http://localhost:5173'" # replace for production
         AllowOrigin: "'https://cobbler.phil-code.com'"
         AllowCredentials: true
+
+      # Logging settings
       MethodSettings:
         - LoggingLevel: INFO
           ResourcePath: "/*"
@@ -32,6 +32,20 @@ Resources:
             - CobblerApiLogGroup
             - Arn
         Format: '$context.identity.sourceIp $context.identity.caller $context.identity.user [$context.requestTime] "$context.httpMethod $context.resourcePath $context.protocol" $context.status $context.responseLength $context.requestId'
+
+  CobblerApiLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/aws/api-gateway/${CobblerRecipesService}"
+      RetentionInDays: 7    
+
+  # CobblerRecipesFunctionPermission:
+  #   Type: AWS::Lambda::Permission
+  #   Properties:
+  #     Action: lambda:InvokeFunction
+  #     FunctionName: !Ref CobblerRecipesFunction
+  #     Principal: apigateway.amazonaws.com
+  #     SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${CobblerRecipesService}/*/*/*"
 
   CobblerRecipesFunction:
     Type: AWS::Serverless::Function
@@ -51,12 +65,16 @@ Resources:
             Path: /recipes
             Method: OPTIONS
             RestApiId: !Ref CobblerRecipesService
+            Auth:
+              Authorizer: NONE
         RecipesOptionsId:
           Type: Api
           Properties:
             Path: /recipes/{id}
             Method: OPTIONS
             RestApiId: !Ref CobblerRecipesService
+            Auth:
+              Authorizer: NONE
         GetRecipe:
           Type: Api
           Properties:
@@ -65,6 +83,7 @@ Resources:
             RestApiId: !Ref CobblerRecipesService
             Auth:
               Authorizer: AWS_IAM
+              InvokeRole: NONE
         GetRecipes:
           Type: Api
           Properties:
@@ -73,6 +92,7 @@ Resources:
             RestApiId: !Ref CobblerRecipesService
             Auth:
               Authorizer: AWS_IAM
+              InvokeRole: NONE
         PutRecipe:
           Type: Api
           Properties:
@@ -81,6 +101,7 @@ Resources:
             RestApiId: !Ref CobblerRecipesService
             Auth:
               Authorizer: AWS_IAM
+              InvokeRole: NONE
         DeleteRecipe:
           Type: Api
           Properties:
@@ -89,6 +110,7 @@ Resources:
             RestApiId: !Ref CobblerRecipesService
             Auth:
               Authorizer: AWS_IAM
+              InvokeRole: NONE
         UpdateRecipe:
           Type: Api
           Properties:
@@ -97,7 +119,7 @@ Resources:
             RestApiId: !Ref CobblerRecipesService
             Auth:
               Authorizer: AWS_IAM
-
+              InvokeRole: NONE
     Metadata:
       BuildMethod: makefile
 
