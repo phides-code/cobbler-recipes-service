@@ -39,14 +39,6 @@ Resources:
       LogGroupName: !Sub "/aws/api-gateway/${CobblerRecipesService}"
       RetentionInDays: 7    
 
-  # CobblerRecipesFunctionPermission:
-  #   Type: AWS::Lambda::Permission
-  #   Properties:
-  #     Action: lambda:InvokeFunction
-  #     FunctionName: !Ref CobblerRecipesFunction
-  #     Principal: apigateway.amazonaws.com
-  #     SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${CobblerRecipesService}/*/*/*"
-
   CobblerRecipesFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -81,45 +73,30 @@ Resources:
             Path: /recipes/{id}
             Method: GET
             RestApiId: !Ref CobblerRecipesService
-            Auth:
-              Authorizer: AWS_IAM
-              InvokeRole: NONE
         GetRecipes:
           Type: Api
           Properties:
             Path: /recipes
             Method: GET
             RestApiId: !Ref CobblerRecipesService
-            Auth:
-              Authorizer: AWS_IAM
-              InvokeRole: NONE
         PutRecipe:
           Type: Api
           Properties:
             Path: /recipes
             Method: POST
             RestApiId: !Ref CobblerRecipesService
-            Auth:
-              Authorizer: AWS_IAM
-              InvokeRole: NONE
         DeleteRecipe:
           Type: Api
           Properties:
             Path: /recipes/{id}
             Method: DELETE
             RestApiId: !Ref CobblerRecipesService
-            Auth:
-              Authorizer: AWS_IAM
-              InvokeRole: NONE
         UpdateRecipe:
           Type: Api
           Properties:
             Path: /recipes/{id}
             Method: PUT
             RestApiId: !Ref CobblerRecipesService
-            Auth:
-              Authorizer: AWS_IAM
-              InvokeRole: NONE
     Metadata:
       BuildMethod: makefile
 
