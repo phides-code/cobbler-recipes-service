@@ -33,6 +33,14 @@ Resources:
             - Arn
         Format: '$context.identity.sourceIp $context.identity.caller $context.identity.user [$context.requestTime] "$context.httpMethod $context.resourcePath $context.protocol" $context.status $context.responseLength $context.requestId'
 
+  CobblerRecipesFunctionPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref CobblerRecipesFunction
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${CobblerRecipesService}/*"
+
   CobblerRecipesFunction:
     Type: AWS::Serverless::Function
     Properties:

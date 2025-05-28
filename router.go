@@ -25,17 +25,6 @@ var headers = map[string]string{
 }
 
 func router(ctx context.Context, req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-	defer func() (events.APIGatewayProxyResponse, error) {
-		if r := recover(); r != nil {
-			log.Printf("Panic recovered: %v", r)
-			return events.APIGatewayProxyResponse{
-				StatusCode: 500,
-				Headers:    headers,
-				Body:       "Internal Server Error (defer function)",
-			}, nil
-		}
-		return events.APIGatewayProxyResponse{}, nil
-	}()
 
 	// Log request details for debugging authentication issues
 	log.Printf("Request received: Method=%s, Path=%s", req.HTTPMethod, req.Path)
