@@ -25,11 +25,7 @@ var headers = map[string]string{
 }
 
 func router(ctx context.Context, req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-
-	// Log request details for debugging authentication issues
-	log.Printf("Request received: Method=%s, Path=%s", req.HTTPMethod, req.Path)
-	log.Printf("Auth Context: %+v", req.RequestContext.Identity)
-	log.Printf("Headers: %+v", req.Headers)
+	log.Println("router() received " + req.HTTPMethod + " request")
 
 	switch req.HTTPMethod {
 	case "GET":
