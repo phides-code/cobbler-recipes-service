@@ -26,18 +26,6 @@ Resources:
           HttpMethod: "*"
           MetricsEnabled: true
           DataTraceEnabled: true
-      AccessLogSetting:
-        DestinationArn: 
-          Fn::GetAtt:
-            - CobblerRecipesLogGroup
-            - Arn
-        Format: '$context.identity.sourceIp $context.identity.caller $context.identity.user [$context.requestTime] "$context.httpMethod $context.resourcePath $context.protocol" $context.status $context.responseLength $context.requestId'
-
-  CobblerRecipesLogGroup:
-    Type: AWS::Logs::LogGroup
-    Properties:
-      LogGroupName: !Sub "/aws/api-gateway/${CobblerRecipesService}"
-      RetentionInDays: 7    
 
   CobblerRecipesFunction:
     Type: AWS::Serverless::Function
