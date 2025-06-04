@@ -33,7 +33,7 @@ Resources:
       Timeout: 10
       Handler: bootstrap
       Runtime: provided.al2023
-      MemorySize: 512
+      MemorySize: 1024
       Policies:
         - AWSLambdaExecute
         - DynamoDBCrudPolicy:
