@@ -68,7 +68,7 @@ func scanForEntities(ctx context.Context, queryString string) ([]Entity, error) 
 	for {
 		input := &dynamodb.ScanInput{
 			TableName:        aws.String(TableName),
-			FilterExpression: aws.String("contains(lowercaseTitle, :query)"),
+			FilterExpression: aws.String("contains(lowercaseTitle, :query) OR contains(tagsList, :query)"),
 			ExpressionAttributeValues: map[string]types.AttributeValue{
 				":query": &types.AttributeValueMemberS{Value: lowercaseQuery},
 			},
