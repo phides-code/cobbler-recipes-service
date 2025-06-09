@@ -82,3 +82,13 @@ func toResponseEntitySlice(entities []Entity) []ResponseEntity {
 	}
 	return responses
 }
+
+func flattenArray(stringArray []string) string {
+	var result string
+
+	for _, str := range stringArray {
+		result += str + ","
+	}
+
+	return result
+}

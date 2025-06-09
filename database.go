@@ -143,6 +143,7 @@ func insertEntity(ctx context.Context, newEntity NewEntity) (*Entity, error) {
 		LowercaseTitle: strings.ToLower(newEntity.Title),
 		Description:    newEntity.Description,
 		Tags:           newEntity.Tags,
+		TagsList:       flattenArray(newEntity.Tags),
 		Ingredients:    newEntity.Ingredients,
 		Steps:          newEntity.Steps,
 		Likes:          0,

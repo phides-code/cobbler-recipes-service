@@ -11,6 +11,7 @@ type Entity struct {
 	Likes          int    `json:"likes" dynamodbav:"likes"`
 	CreatedOn      uint64 `json:"createdOn" dynamodbav:"createdOn"`
 	LowercaseTitle string `json:"lowercaseTitle" dynamodbav:"lowercaseTitle"`
+	TagsList       string `json:"tagsList" dynamodbav:"tagsList"`
 	//
 	Title       string      `json:"title" dynamodbav:"title"`
 	Description string      `json:"description" dynamodbav:"description"`
@@ -37,6 +38,8 @@ type UpdatedEntity struct {
 	Likes *int `json:"likes" validate:"required,gte=0"` // Ensure that 0 likes is allowed
 }
 
+// ResponseEntity omits LowercaseTitle and TagsList fields
+// as they are not needed in the response.
 type ResponseEntity struct {
 	Id          string      `json:"id,omitempty"`
 	Author      string      `json:"author"`
