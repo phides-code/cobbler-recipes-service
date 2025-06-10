@@ -92,3 +92,22 @@ func flattenArray(stringArray []string) string {
 
 	return result
 }
+
+func sortEntitiesByLikes(entities []Entity) []Entity {
+	if len(entities) == 0 {
+		return entities
+	}
+
+	sortedEntities := make([]Entity, len(entities))
+	copy(sortedEntities, entities)
+
+	for i := 0; i < len(sortedEntities)-1; i++ {
+		for j := 0; j < len(sortedEntities)-i-1; j++ {
+			if sortedEntities[j].Likes < sortedEntities[j+1].Likes {
+				sortedEntities[j], sortedEntities[j+1] = sortedEntities[j+1], sortedEntities[j]
+			}
+		}
+	}
+
+	return sortedEntities
+}

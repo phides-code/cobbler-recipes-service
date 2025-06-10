@@ -132,8 +132,10 @@ func processGetAll(ctx context.Context) (events.APIGatewayProxyResponse, error) 
 		return serverError(err)
 	}
 
+	sortedByLikes := sortEntitiesByLikes(entities)
+
 	response := ResponseStructure{
-		Data:         toResponseEntitySlice(entities),
+		Data:         toResponseEntitySlice(sortedByLikes),
 		ErrorMessage: nil,
 	}
 
