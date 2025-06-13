@@ -309,6 +309,11 @@ func processGetTags(ctx context.Context) (events.APIGatewayProxyResponse, error)
 	sort.Slice(tags, func(i, j int) bool {
 		return tags[i].Count > tags[j].Count
 	})
+	// Only include the first 5 tags in the response
+	maxTags := 5
+	if len(tags) > maxTags {
+		tags = tags[:maxTags]
+	}
 	response := ResponseStructure{
 		Data:         tags,
 		ErrorMessage: nil,
