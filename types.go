@@ -53,3 +53,8 @@ type ResponseEntity struct {
 	PrepTime    string      `json:"prepTime"`
 	ImageSource ImageSource `json:"imageSource"`
 }
+
+type Tag struct {
+	Name  string `json:"name"`
+	Count int    `json:"count"`
+}
