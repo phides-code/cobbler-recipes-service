@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"sort"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/go-playground/validator"
@@ -59,9 +58,6 @@ func processOptions() (events.APIGatewayProxyResponse, error) {
 }
 
 func processGet(ctx context.Context, req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-	if req.Path == "/recipes/tags" {
-		return processGetTags(ctx)
-	}
 	id, idPresent := req.PathParameters["id"]
 	if idPresent {
 		return processGetEntityById(ctx, id)
@@ -282,46 +278,6 @@ func processDelete(ctx context.Context, req events.APIGatewayProxyRequest) (even
 		return serverError(err)
 	}
 
-	return events.APIGatewayProxyResponse{
-		StatusCode: http.StatusOK,
-		Body:       string(responseJson),
-		Headers:    headers,
-	}, nil
-}
-
-// processGetTags aggregates all unique tags from all recipes
-func processGetTags(ctx context.Context) (events.APIGatewayProxyResponse, error) {
-	entities, err := listEntities(ctx)
-	if err != nil {
-		return serverError(err)
-	}
-	tagCounts := make(map[string]int)
-	for _, entity := range entities {
-		for _, tag := range entity.Tags {
-			tagCounts[tag]++
-		}
-	}
-	tags := make([]Tag, 0, len(tagCounts))
-	for name, count := range tagCounts {
-		tags = append(tags, Tag{Name: name, Count: count})
-	}
-	// Sort tags by count descending
-	sort.Slice(tags, func(i, j int) bool {
-		return tags[i].Count > tags[j].Count
-	})
-	// Only include the first 5 tags in the response
-	maxTags := 5
-	if len(tags) > maxTags {
-		tags = tags[:maxTags]
-	}
-	response := ResponseStructure{
-		Data:         tags,
-		ErrorMessage: nil,
-	}
-	responseJson, err := json.Marshal(response)
-	if err != nil {
-		return serverError(err)
-	}
 	return events.APIGatewayProxyResponse{
 		StatusCode: http.StatusOK,
 		Body:       string(responseJson),

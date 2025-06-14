@@ -89,20 +89,6 @@ Resources:
             Path: /recipes/{id}
             Method: PUT
             RestApiId: !Ref CobblerRecipesService
-        GetRecipeTags:
-          Type: Api
-          Properties:
-            Path: /recipes/tags
-            Method: GET
-            RestApiId: !Ref CobblerRecipesService
-        RecipesTagsOptions:
-          Type: Api
-          Properties:
-            Path: /recipes/tags
-            Method: OPTIONS
-            RestApiId: !Ref CobblerRecipesService
-            Auth:
-              Authorizer: NONE
     Metadata:
       BuildMethod: makefile
 
