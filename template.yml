@@ -10,12 +10,13 @@ Resources:
       StageName: Prod
       Auth:
         DefaultAuthorizer: AWS_IAM
-        InvokeRole: NONE  
+        InvokeRole: NONE
+        AddDefaultAuthorizerToCorsPreflight: false
 
       Cors:
         AllowMethods: "'OPTIONS, POST, GET, PUT, DELETE'"
         AllowHeaders: "'Content-Type, x-amz-content-sha256, x-amz-date, X-Amz-Security-Token, Authorization'"
-        # AllowOrigin: "'http://localhost:5173'" # replace for production
+        # AllowOrigin: "'http://localhost:5173'"
         AllowOrigin: "'https://cobbler.phil-code.com'"
         AllowCredentials: true
 
